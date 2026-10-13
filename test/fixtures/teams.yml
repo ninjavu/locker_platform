@@ -1,0 +1,11 @@
+amazon_night:
+  name: Night Shift
+  company: amazon
+
+amazon_day:
+  name: Day Shift
+  company: amazon
+
+dpd_north:
+  name: North Crew
+  company: dpd

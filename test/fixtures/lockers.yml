@@ -1,0 +1,14 @@
+amazon_night_locker:
+  name: AMZ-N-01
+  state: closed
+  team: amazon_night
+
+amazon_day_locker:
+  name: AMZ-D-01
+  state: closed
+  team: amazon_day
+
+dpd_locker:
+  name: DPD-N-01
+  state: open
+  team: dpd_north

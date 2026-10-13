@@ -1,0 +1,18 @@
+alice:
+  name: Alice
+  role: employee
+  team: amazon_night
+
+aaron:
+  name: Aaron
+  role: employee
+  team: amazon_day
+
+daria:
+  name: Daria
+  role: employee
+  team: dpd_north
+
+support:
+  name: Sam
+  role: support

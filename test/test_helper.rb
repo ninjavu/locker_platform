@@ -13,3 +13,12 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+module ActionDispatch
+  class IntegrationTest
+    # Mock sign-in: the app stores the acting user in the session.
+    def sign_in_as(user)
+      patch session_path, params: { user_id: user.id }
+    end
+  end
+end
