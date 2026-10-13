@@ -25,7 +25,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      RAILS_ENV: development
+      # No RAILS_ENV here: the server defaults to development, and it lets
+      # `docker compose run web bundle exec rspec` pick the test env itself.
       DATABASE_HOST: db
     depends_on:
       db:

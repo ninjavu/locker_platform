@@ -20,7 +20,7 @@ users (employees of different teams and companies, and a support engineer).
 Run the tests:
 
 ```sh
-docker compose run --rm web bin/rails test
+docker compose run --rm web bundle exec rspec
 ```
 
 Reset the demo data:
