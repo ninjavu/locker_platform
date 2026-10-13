@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.1].define(version: 2026_10_14_100005) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -19,8 +22,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_100005) do
   end
 
   create_table "locker_events", force: :cascade do |t|
-    t.integer "locker_id", null: false
-    t.integer "user_id", null: false
+    t.bigint "locker_id", null: false
+    t.bigint "user_id", null: false
     t.string "action", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_locker_events_on_created_at"
@@ -31,7 +34,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_100005) do
   create_table "lockers", force: :cascade do |t|
     t.string "name", null: false
     t.string "state", default: "closed", null: false
-    t.integer "team_id", null: false
+    t.bigint "team_id", null: false
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -40,7 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_100005) do
 
   create_table "teams", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "company_id", null: false
+    t.bigint "company_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id", "name"], name: "index_teams_on_company_id_and_name", unique: true
@@ -50,7 +53,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_100005) do
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
     t.string "role", default: "employee", null: false
-    t.integer "team_id"
+    t.bigint "team_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_users_on_team_id"

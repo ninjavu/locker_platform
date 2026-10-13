@@ -29,7 +29,9 @@ Reset the demo data:
 docker compose run --rm web bin/rails db:reset
 ```
 
-Without Docker: Ruby 3.4, then `bundle install && bin/rails db:prepare && bin/rails server`.
+Without Docker: Ruby 3.4 and a local PostgreSQL (see `config/database.yml`
+for the `DATABASE_HOST` / `DATABASE_USERNAME` / `DATABASE_PASSWORD` env vars),
+then `bundle install && bin/rails db:prepare && bin/rails server`.
 
 ## Data model
 
@@ -63,8 +65,9 @@ User (role: support) — belongs to no team, sees the whole platform
 - **Concurrent clicks can't double-log.** Lockers use optimistic locking
   (`lock_version`): when two requests race to open the same locker, one wins
   and the other gets a "just operated by someone else" message instead of a
-  second bogus audit row. (Chosen over `SELECT ... FOR UPDATE`, which SQLite
-  doesn't support.)
+  second bogus audit row. (Optimistic rather than `SELECT ... FOR UPDATE`:
+  no row lock held across the operation, and a lost race is a visible
+  conflict rather than a silent wait.)
 - **Roles are an enum on User** (`employee` / `support`), not separate models:
   two roles with one behavioral difference don't justify STI.
 - Authentication is mocked per the brief: the acting user sits in the
