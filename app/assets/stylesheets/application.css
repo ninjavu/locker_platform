@@ -8,3 +8,26 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+/* Compact inline form controls (Pico makes them full-width block elements). */
+.user-switcher {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.user-switcher select,
+.user-switcher input[type="submit"] {
+  width: auto;
+  margin-bottom: 0;
+}
+
+form:has(> .action-button) {
+  display: inline;
+}
+
+.action-button {
+  width: auto;
+  margin-bottom: 0;
+  padding: 0.25rem 1rem;
+}

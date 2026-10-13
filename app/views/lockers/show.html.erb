@@ -1,0 +1,42 @@
+<% content_for :title, "Locker #{@locker.name}" %>
+
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><%= link_to "Lockers", lockers_path %></li>
+    <li><%= @locker.name %></li>
+  </ul>
+</nav>
+
+<h1>Locker <%= @locker.name %></h1>
+
+<p>
+  <strong><%= @locker.team.company.name %></strong> / <%= @locker.team.name %>
+  &mdash; currently <%= render "state", locker: @locker %>
+</p>
+
+<%= render "actions", locker: @locker %>
+
+<h2>Action history</h2>
+
+<% if @events.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>When</th>
+        <th>Action</th>
+        <th>By</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @events.each do |event| %>
+        <tr>
+          <td><%= event.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          <td><%= event.action %></td>
+          <td><%= event.user.label %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No actions yet.</p>
+<% end %>

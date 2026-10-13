@@ -1,7 +1,14 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  # Changes to the importmap will invalidate the etag for HTML responses
-  stale_when_importmap_changes
+  helper_method :current_user
+
+  private
+
+  # Mock authentication (out of scope per the assignment): the "logged in"
+  # user lives in the session and is switched via the header dropdown.
+  # Defaults to the first employee so tenant scoping is visible right away.
+  def current_user
+    @current_user ||= User.find_by(id: session[:user_id]) || User.employee.order(:id).first
+  end
 end

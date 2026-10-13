@@ -1,0 +1,30 @@
+<h1>Lockers</h1>
+
+<% if current_user.support? %>
+  <p>You are an eLocker support engineer: all lockers on the platform are listed.</p>
+<% else %>
+  <p>Lockers of <strong><%= current_user.company.name %> / <%= current_user.team.name %></strong>.</p>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Locker</th>
+      <th>Company</th>
+      <th>Team</th>
+      <th>State</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @lockers.each do |locker| %>
+      <tr>
+        <td><%= link_to locker.name, locker %></td>
+        <td><%= locker.team.company.name %></td>
+        <td><%= locker.team.name %></td>
+        <td><%= render "state", locker: %></td>
+        <td><%= render "actions", locker: %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

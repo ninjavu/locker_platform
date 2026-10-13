@@ -1,0 +1,5 @@
+<% if locker.may_open? %>
+  <%= button_to "Open", open_locker_path(locker), class: "action-button" %>
+<% else %>
+  <%= button_to "Close", close_locker_path(locker), class: "action-button secondary" %>
+<% end %>

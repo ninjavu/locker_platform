@@ -1,0 +1,34 @@
+<% content_for :title, "Action log" %>
+
+<h1>Action log</h1>
+
+<p>All open and close actions for the lockers available to you, newest first.</p>
+
+<% if @events.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>When</th>
+        <th>Locker</th>
+        <th>Company</th>
+        <th>Team</th>
+        <th>Action</th>
+        <th>By</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @events.each do |event| %>
+        <tr>
+          <td><%= event.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          <td><%= link_to event.locker.name, event.locker %></td>
+          <td><%= event.locker.team.company.name %></td>
+          <td><%= event.locker.team.name %></td>
+          <td><%= event.action %></td>
+          <td><%= event.user.label %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No actions yet.</p>
+<% end %>
