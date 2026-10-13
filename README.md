@@ -60,6 +60,11 @@ User (role: support) — belongs to no team, sees the whole platform
   `locker.open!(current_user)` — and write a `LockerEvent` in the same
   transaction as the state change, so the log can't disagree with the state.
   The "action log" screen is just this table, scoped to the current user.
+- **Concurrent clicks can't double-log.** Lockers use optimistic locking
+  (`lock_version`): when two requests race to open the same locker, one wins
+  and the other gets a "just operated by someone else" message instead of a
+  second bogus audit row. (Chosen over `SELECT ... FOR UPDATE`, which SQLite
+  doesn't support.)
 - **Roles are an enum on User** (`employee` / `support`), not separate models:
   two roles with one behavioral difference don't justify STI.
 - Authentication is mocked per the brief: the acting user sits in the
@@ -88,8 +93,6 @@ User (role: support) — belongs to no team, sees the whole platform
 - Pagination and filters (by locker, user, date) on the action log.
 - Turbo Streams on the locker list so open/close updates the row in place
   (right now it's a full-page redirect, which Turbo Drive already makes fast).
-- Concurrency: optimistic locking or `with_lock` around transitions, so two
-  simultaneous "open" clicks can't both succeed once real hardware is behind it.
 - A `Current.user` CurrentAttributes setup once more code needs the acting user.
 - System tests (Capybara) on top of the integration tests.
 - Proper authentication and admin screens for companies/teams/users.

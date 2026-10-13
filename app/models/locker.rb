@@ -5,7 +5,7 @@ class Locker < ApplicationRecord
   has_one :company, through: :team
   has_many :locker_events, dependent: :destroy
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { scope: :team_id }
 
   # The single tenancy boundary of the app: every controller resolves lockers
   # through this scope, so a record outside the user's reach is a plain 404.
@@ -17,6 +17,10 @@ class Locker < ApplicationRecord
 
     # Events take the acting user, e.g. `locker.open!(current_user)`, and the
     # audit record is written inside the same transaction as the state change.
+    # Always use the bang variants: only they wrap persistence and callbacks
+    # in a transaction, so state and audit log cannot disagree. A concurrent
+    # transition on a stale instance raises ActiveRecord::StaleObjectError
+    # (optimistic locking via lockers.lock_version).
     event :open do
       transitions from: :closed, to: :open
       after { |user| log_action("open", user) }

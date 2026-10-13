@@ -30,6 +30,18 @@ class LockerTest < ActiveSupport::TestCase
     assert locker.reload.closed?
   end
 
+  test "concurrent transition on a stale instance fails instead of double-logging" do
+    locker = lockers(:amazon_night_locker)
+    stale = Locker.find(locker.id) # second request's copy, still sees "closed"
+
+    locker.open!(users(:alice))
+
+    assert_no_difference -> { LockerEvent.count } do
+      assert_raises(ActiveRecord::StaleObjectError) { stale.open!(users(:alice)) }
+    end
+    assert locker.reload.open?
+  end
+
   test "accessible_by scopes employees to their team and support to everything" do
     assert_equal [ lockers(:amazon_night_locker) ], Locker.accessible_by(users(:alice)).to_a
     assert_equal Locker.count, Locker.accessible_by(users(:support)).count

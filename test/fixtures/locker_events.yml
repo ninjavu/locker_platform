@@ -10,6 +10,12 @@ amazon_night_close:
   action: close
   created_at: <%= 1.hour.ago %>
 
+amazon_day_open:
+  locker: amazon_day_locker
+  user: aaron
+  action: open
+  created_at: <%= 45.minutes.ago %>
+
 dpd_open:
   locker: dpd_locker
   user: daria

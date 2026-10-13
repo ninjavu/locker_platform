@@ -32,10 +32,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_100005) do
     t.string "name", null: false
     t.string "state", default: "closed", null: false
     t.integer "team_id", null: false
+    t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_lockers_on_name", unique: true
-    t.index ["team_id"], name: "index_lockers_on_team_id"
+    t.index ["team_id", "name"], name: "index_lockers_on_team_id_and_name", unique: true
   end
 
   create_table "teams", force: :cascade do |t|

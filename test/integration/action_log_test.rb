@@ -7,7 +7,8 @@ class ActionLogTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "AMZ-N-01"
-    assert_not_includes response.body, "DPD-N-01"
+    assert_not_includes response.body, "AMZ-D-01" # other team, same company
+    assert_not_includes response.body, "DPD-N-01" # other company
   end
 
   test "support engineer sees events across all companies" do

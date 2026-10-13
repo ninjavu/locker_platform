@@ -57,14 +57,16 @@ class LockerAccessTest < ActionDispatch::IntegrationTest
     sign_in_as users(:alice)
 
     [ lockers(:amazon_day_locker), lockers(:dpd_locker) ].each do |locker|
-      state_before = locker.state
+      [ open_locker_path(locker), close_locker_path(locker) ].each do |path|
+        state_before = locker.state
 
-      assert_no_difference -> { LockerEvent.count } do
-        post open_locker_path(locker)
+        assert_no_difference -> { LockerEvent.count } do
+          post path
+        end
+
+        assert_response :not_found
+        assert_equal state_before, locker.reload.state
       end
-
-      assert_response :not_found
-      assert_equal state_before, locker.reload.state
     end
   end
 

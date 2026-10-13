@@ -31,9 +31,13 @@ class LockersController < ApplicationController
 
   def operate(event)
     @locker.public_send(:"#{event}!", current_user)
-    redirect_back fallback_location: @locker, notice: "Locker #{@locker.name} is now #{@locker.state}."
+    redirect_back fallback_location: @locker, allow_other_host: false,
+                  notice: "Locker #{@locker.name} is now #{@locker.state}."
   rescue AASM::InvalidTransition
-    redirect_back fallback_location: @locker,
+    redirect_back fallback_location: @locker, allow_other_host: false,
                   alert: "Locker #{@locker.name} is already #{@locker.state} — nothing to do."
+  rescue ActiveRecord::StaleObjectError
+    redirect_back fallback_location: @locker, allow_other_host: false,
+                  alert: "Locker #{@locker.name} was just operated by someone else — check its current state."
   end
 end
