@@ -72,6 +72,11 @@ User (role: support) — belongs to no team, sees the whole platform
   two roles with one behavioral difference don't justify STI.
 - Authentication is mocked per the brief: the acting user sits in the
   session, switched from the header dropdown. Access rules are real.
+- **PostgreSQL + Docker instead of the default SQLite.** Admittedly more than
+  a localhost demo strictly needs; chosen to mirror what this app would run
+  in production (a multi-tenant SaaS on SQLite is a stretch) while keeping
+  the reviewer's setup to one command, `docker compose up`, with no local
+  Ruby or Postgres required.
 
 ## Assumptions and questions for the business
 
