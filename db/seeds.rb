@@ -33,11 +33,13 @@ end
 # support opens one locker per company and leaves it open.
 User.employee.find_each do |user|
   locker = user.team.lockers.first
-  locker.open!(user)
-  locker.close!(user)
+  Lockers::Operate.call(locker:, user:, event: :open)
+  Lockers::Operate.call(locker:, user:, event: :close)
 end
 
-[ "AMZ-N-02", "DPD-S-02" ].each { |name| Locker.find_by!(name:).open!(support) }
+[ "AMZ-N-02", "DPD-S-02" ].each do |name|
+  Lockers::Operate.call(locker: Locker.find_by!(name:), user: support, event: :open)
+end
 
 puts "Seeded: #{Company.count} companies, #{Team.count} teams, #{User.count} users, " \
      "#{Locker.count} lockers, #{LockerEvent.count} events"

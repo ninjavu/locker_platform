@@ -20,24 +20,19 @@ class LockersController < ApplicationController
   private
 
   def accessible_lockers
-    Locker.accessible_by(current_user)
+    Lockers::AccessibleToUser.call(user: current_user)
   end
 
-  # Lockers are always resolved through the accessible scope, so a locker
+  # Lockers are always resolved through the accessible query, so a locker
   # from another team or company is indistinguishable from a missing one (404).
   def set_locker
     @locker = accessible_lockers.find(params.expect(:id))
   end
 
   def operate(event)
-    @locker.public_send(:"#{event}!", current_user)
-    redirect_back fallback_location: @locker, allow_other_host: false,
-                  notice: "Locker #{@locker.name} is now #{@locker.state}."
-  rescue AASM::InvalidTransition
-    redirect_back fallback_location: @locker, allow_other_host: false,
-                  alert: "Locker #{@locker.name} is already #{@locker.state} — nothing to do."
-  rescue ActiveRecord::StaleObjectError
-    redirect_back fallback_location: @locker, allow_other_host: false,
-                  alert: "Locker #{@locker.name} was just operated by someone else — check its current state."
+    result = Lockers::Operate.call(locker: @locker, user: current_user, event: event)
+
+    flash_key = result.success? ? :notice : :alert
+    redirect_back fallback_location: @locker, allow_other_host: false, flash_key => result.message
   end
 end

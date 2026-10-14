@@ -44,11 +44,19 @@ Company 1──* Team 1──* User   (role: employee)
 User (role: support) — belongs to no team, sees the whole platform
 ```
 
-- **Tenancy lives in one place.** `Locker.accessible_by(user)` returns
+- **Business logic lives in a thin service layer** (`app/services`), keeping
+  models as data + state and controllers as HTTP: `Lockers::Operate` is the
+  one write-side operation (transition + audit, atomically; expected outcomes
+  come back as a `Result`, not exceptions), and `Lockers::AccessibleToUser` /
+  `LockerEvents::AccessibleToUser` are the read-side tenancy queries. For an
+  app this size that's one notch more structure than strictly necessary —
+  the trade-off is a single greppable convention (`Service.call`) and an
+  obvious place for every rule as the domain grows.
+- **Tenancy lives in one place.** `Lockers::AccessibleToUser` returns
   everything for support and `where(team_id: user.team_id)` for employees.
-  Every controller read goes through that scope — including the open/close
+  Every controller read goes through that query — including the open/close
   POSTs — so a locker outside the user's reach is a plain 404, and the action
-  log reuses the same scope via a join. There is no separate authorization
+  log reuses the same query via a join. There is no separate authorization
   layer to keep in sync with the queries: the queries are the authorization.
 - **A locker belongs to exactly one team.** The brief says each team works
   with "its own set of the company's lockers", which I read as disjoint sets;
@@ -58,10 +66,10 @@ User (role: support) — belongs to no team, sees the whole platform
   hardly need a gem, but it buys validated transitions for free: opening an
   open locker is an `InvalidTransition`, not a silent no-op, and the UI only
   renders the action that is currently possible (`may_open?`).
-- **Every transition is audited atomically.** Events take the acting user —
-  `locker.open!(current_user)` — and write a `LockerEvent` in the same
-  transaction as the state change, so the log can't disagree with the state.
-  The "action log" screen is just this table, scoped to the current user.
+- **Every transition is audited atomically.** `Lockers::Operate` writes the
+  `LockerEvent` with the acting user in the same transaction as the state
+  change, so the log can't disagree with the state. The "action log" screen
+  is just this table, scoped to the current user.
 - **Concurrent clicks can't double-log.** Lockers use optimistic locking
   (`lock_version`): when two requests race to open the same locker, one wins
   and the other gets a "just operated by someone else" message instead of a
